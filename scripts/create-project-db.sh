@@ -19,8 +19,8 @@ fi
 
 echo "Creating database '$PROJECT_NAME' in ok-shared-infra PostgreSQL ($POSTGRES_CONTAINER)..."
 
-# Create user and database
-docker exec "$POSTGRES_CONTAINER" psql -U postgres -c "
+# Create user and database (using god user from ok-shared-infra)
+docker exec "$POSTGRES_CONTAINER" psql -U god -c "
 DO \$\$
 BEGIN
     IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = '$PROJECT_NAME') THEN
