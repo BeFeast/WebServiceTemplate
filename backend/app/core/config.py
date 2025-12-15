@@ -25,14 +25,14 @@ class Settings(BaseSettings):
 
     # CORS
     CORS_ORIGINS: list[str] = [
-        "http://localhost:3000",
-        "https://{{PROJECT_SUBDOMAIN}}.oklabs.uk",
+        "http://10.10.0.13:{{FRONTEND_PORT}}",
+        "https://{{PROJECT_NAME}}.oklabs.uk",
     ]
 
     # Google OAuth
     GOOGLE_CLIENT_ID: str = ""
     GOOGLE_CLIENT_SECRET: str = ""
-    GOOGLE_REDIRECT_URI: str = "http://localhost:8000/api/v1/auth/callback"
+    GOOGLE_REDIRECT_URI: str = "https://{{PROJECT_NAME}}-api.oklabs.uk/api/v1/auth/callback"
 
 
 @lru_cache
