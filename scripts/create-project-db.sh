@@ -19,7 +19,7 @@ fi
 
 echo "Creating database '$PROJECT_NAME' in ok-shared-infra PostgreSQL ($POSTGRES_CONTAINER)..."
 
-# Create user and database (using god user from ok-shared-infra)
+# Create user (using god user from ok-shared-infra)
 docker exec "$POSTGRES_CONTAINER" psql -U god -d postgres -c "
 DO \$\$
 BEGIN
@@ -28,13 +28,12 @@ BEGIN
     END IF;
 END
 \$\$;
-
-SELECT 'User created or already exists' AS status;
-
-DROP DATABASE IF EXISTS $PROJECT_NAME;
-CREATE DATABASE $PROJECT_NAME OWNER $PROJECT_NAME;
-GRANT ALL PRIVILEGES ON DATABASE $PROJECT_NAME TO $PROJECT_NAME;
 "
+
+# Drop and create database (must be outside transaction)
+docker exec "$POSTGRES_CONTAINER" psql -U god -d postgres -c "DROP DATABASE IF EXISTS $PROJECT_NAME;"
+docker exec "$POSTGRES_CONTAINER" psql -U god -d postgres -c "CREATE DATABASE $PROJECT_NAME OWNER $PROJECT_NAME;"
+docker exec "$POSTGRES_CONTAINER" psql -U god -d postgres -c "GRANT ALL PRIVILEGES ON DATABASE $PROJECT_NAME TO $PROJECT_NAME;"
 
 echo ""
 echo "Database created successfully!"
