@@ -6,6 +6,16 @@
 - **Purpose**: GitHub template for DevBox-deployed web services
 - **Sub-agents**: See `backend/AGENTS.md` and `frontend/AGENTS.md` for details
 
+## Vibe Coding Slash Commands
+
+Use these Factory CLI slash commands for rapid development:
+
+```bash
+/dev-scaffold <name>  # Create new project from template
+/dev-run              # Start development servers
+/dev-deploy           # Deploy Docker stack
+```
+
 ## Root Setup Commands
 ```bash
 # Initialize project from template (replaces placeholders)
@@ -91,11 +101,18 @@ rg -n "process\.env\." frontend/src/
 - **Cache**: ok-shared-infra Redis (external, not in compose)
 - **Network**: `ok-shared-network` (external Docker network)
 
+### URL Routing (NPM)
+Uses separate subdomains to avoid path rewriting issues:
+- **Frontend**: `https://<project>.oklabs.uk` → port 3000
+- **Backend API**: `https://<project>-api.oklabs.uk` → port 8000
+
+Frontend calls backend via `NEXT_PUBLIC_API_URL` environment variable.
+
 ### Key Scripts
 ```bash
 ./scripts/init-project.sh      # Initialize from template
 ./scripts/create-project-db.sh # Create DB in shared PostgreSQL
-./scripts/setup-subdomain.sh   # Configure NPM + Cloudflare
+./scripts/setup-npm-hosts.sh   # Create NPM proxy hosts (FE + API)
 ./scripts/deploy-to-devbox.sh  # Deploy via Portainer
 ```
 

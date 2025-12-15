@@ -16,9 +16,6 @@ echo ""
 read -p "Project name (lowercase, no spaces): " PROJECT_NAME
 PROJECT_NAME=$(echo "$PROJECT_NAME" | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
 
-read -p "Subdomain for ${PROJECT_NAME}.oklabs.uk: " PROJECT_SUBDOMAIN
-PROJECT_SUBDOMAIN=${PROJECT_SUBDOMAIN:-$PROJECT_NAME}
-
 read -p "Backend port [8000]: " BACKEND_PORT
 BACKEND_PORT=${BACKEND_PORT:-8000}
 
@@ -35,9 +32,8 @@ DB_PASS=$(openssl rand -base64 16 | tr -dc 'a-zA-Z0-9' | head -c 16)
 echo ""
 echo -e "${YELLOW}Configuration:${NC}"
 echo "  Project Name: $PROJECT_NAME"
-echo "  Subdomain: $PROJECT_SUBDOMAIN.oklabs.uk"
-echo "  Backend Port: $BACKEND_PORT"
-echo "  Frontend Port: $FRONTEND_PORT"
+echo "  Frontend URL: https://${PROJECT_NAME}.oklabs.uk (port $FRONTEND_PORT)"
+echo "  Backend URL:  https://${PROJECT_NAME}-api.oklabs.uk (port $BACKEND_PORT)"
 echo "  Redis DB: $REDIS_DB_NUM"
 echo ""
 
@@ -56,7 +52,6 @@ find . -type f \( -name "*.py" -o -name "*.ts" -o -name "*.tsx" -o -name "*.json
     -not -path "./.git/*" \
     -exec sed -i \
     -e "s/{{PROJECT_NAME}}/$PROJECT_NAME/g" \
-    -e "s/{{PROJECT_SUBDOMAIN}}/$PROJECT_SUBDOMAIN/g" \
     -e "s/{{BACKEND_PORT}}/$BACKEND_PORT/g" \
     -e "s/{{FRONTEND_PORT}}/$FRONTEND_PORT/g" \
     -e "s/{{REDIS_DB_NUM}}/$REDIS_DB_NUM/g" \
@@ -78,13 +73,13 @@ if [[ "$CREATE_DB" =~ ^[Yy]$ ]]; then
     ./scripts/create-project-db.sh "$PROJECT_NAME" "$DB_PASS"
 fi
 
-# Setup subdomain?
+# Setup NPM proxy hosts?
 echo ""
-read -p "Setup subdomain ${PROJECT_SUBDOMAIN}.oklabs.uk? [Y/n]: " SETUP_SUBDOMAIN
-SETUP_SUBDOMAIN=${SETUP_SUBDOMAIN:-Y}
-if [[ "$SETUP_SUBDOMAIN" =~ ^[Yy]$ ]]; then
-    echo -e "${YELLOW}Running subdomain setup...${NC}"
-    ./scripts/setup-subdomain.sh "$PROJECT_SUBDOMAIN" "$FRONTEND_PORT"
+read -p "Setup NPM proxy hosts for ${PROJECT_NAME}.oklabs.uk? [Y/n]: " SETUP_NPM
+SETUP_NPM=${SETUP_NPM:-Y}
+if [[ "$SETUP_NPM" =~ ^[Yy]$ ]]; then
+    echo -e "${YELLOW}Setting up NPM proxy hosts...${NC}"
+    ./scripts/setup-npm-hosts.sh "$PROJECT_NAME" "$FRONTEND_PORT" "$BACKEND_PORT"
 fi
 
 echo ""
@@ -92,11 +87,15 @@ echo -e "${GREEN}========================================${NC}"
 echo -e "${GREEN}  Project initialized successfully!     ${NC}"
 echo -e "${GREEN}========================================${NC}"
 echo ""
-echo -e "Next steps:"
-echo -e "  1. Review and update .env file"
-echo -e "  2. Run: ${YELLOW}make dev${NC} to start development"
-echo -e "  3. Run: ${YELLOW}make deploy${NC} to deploy to DevBox"
+echo -e "Access URLs:"
+echo -e "  Frontend: ${YELLOW}https://${PROJECT_NAME}.oklabs.uk${NC}"
+echo -e "  Backend:  ${YELLOW}https://${PROJECT_NAME}-api.oklabs.uk${NC}"
+echo -e "  API Docs: ${YELLOW}https://${PROJECT_NAME}-api.oklabs.uk/docs${NC}"
 echo ""
-echo -e "Credentials saved:"
+echo -e "Next steps:"
+echo -e "  1. Run: ${YELLOW}/dev-run${NC} to start development servers"
+echo -e "  2. Run: ${YELLOW}/dev-deploy${NC} to deploy Docker stack"
+echo ""
+echo -e "Credentials saved in .env:"
 echo -e "  Database Password: ${YELLOW}${DB_PASS}${NC}"
 echo -e "  Secret Key: ${YELLOW}${SECRET_KEY:0:16}...${NC}"
