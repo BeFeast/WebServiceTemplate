@@ -1,0 +1,32 @@
+{
+  "name": "{{PROJECT_NAME}} Dev",
+  "dockerComposeFile": "docker-compose.dev.yml",
+  "service": "devbox",
+  "workspaceFolder": "/workspace",
+  "forwardPorts": [3000, 8000],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "charliermarsh.ruff",
+        "bradlc.vscode-tailwindcss",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "prisma.prisma",
+        "ms-azuretools.vscode-docker"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/workspace/backend/.venv/bin/python",
+        "python.analysis.typeCheckingMode": "basic",
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "[python]": {
+          "editor.defaultFormatter": "charliermarsh.ruff"
+        }
+      }
+    }
+  },
+  "postCreateCommand": "cd /workspace/backend && uv sync && cd /workspace/frontend && bun install",
+  "remoteUser": "vscode"
+}

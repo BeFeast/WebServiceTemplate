@@ -1,0 +1,23 @@
+services:
+  devbox:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    volumes:
+      - ..:/workspace:cached
+      - backend-venv:/workspace/backend/.venv
+      - frontend-node-modules:/workspace/frontend/node_modules
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://{{PROJECT_NAME}}:{{DB_PASS}}@10.10.0.13:5432/{{PROJECT_NAME}}
+      - REDIS_URL=redis://10.10.0.13:6379/{{REDIS_DB_NUM}}
+      - PYTHONPATH=/workspace/backend
+    ports:
+      - "3000:3000"
+      - "8000:8000"
+    networks:
+      - default
+    command: sleep infinity
+
+volumes:
+  backend-venv:
+  frontend-node-modules:

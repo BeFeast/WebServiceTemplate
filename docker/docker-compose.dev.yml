@@ -1,0 +1,41 @@
+# Development Docker Compose - For local development with hot reload
+# Connects to ok-shared-infra for PostgreSQL/Redis
+
+services:
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile.dev
+    container_name: {{PROJECT_NAME}}-backend-dev
+    volumes:
+      - ../backend:/app
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=${REDIS_URL}
+      - SECRET_KEY=${SECRET_KEY:-dev-secret-key-change-in-production}
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    networks:
+      - ok-shared-infra_default
+    command: uv run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile.dev
+    container_name: {{PROJECT_NAME}}-frontend-dev
+    volumes:
+      - ../frontend:/app
+      - /app/node_modules
+      - /app/.next
+    environment:
+      - NEXT_PUBLIC_API_URL=http://{{PROJECT_NAME}}-backend-dev:8000
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    networks:
+      - ok-shared-infra_default
+    command: bun run dev
+
+networks:
+  ok-shared-infra_default:
+    external: true

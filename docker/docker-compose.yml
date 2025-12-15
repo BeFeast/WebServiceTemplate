@@ -1,0 +1,47 @@
+# Production Docker Compose - Connects to ok-shared-infra for PostgreSQL/Redis
+# Deploy to /opt/stacks/{{PROJECT_NAME}}/ via Portainer
+
+services:
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    container_name: {{PROJECT_NAME}}-backend
+    restart: unless-stopped
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=${REDIS_URL}
+      - SECRET_KEY=${SECRET_KEY}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID:-}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET:-}
+      - GOOGLE_REDIRECT_URI=${GOOGLE_REDIRECT_URI:-}
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    networks:
+      - ok-shared-infra_default
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    container_name: {{PROJECT_NAME}}-frontend
+    restart: unless-stopped
+    environment:
+      - NEXT_PUBLIC_API_URL=http://{{PROJECT_NAME}}-backend:8000
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - ok-shared-infra_default
+
+networks:
+  ok-shared-infra_default:
+    external: true
