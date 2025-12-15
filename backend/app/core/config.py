@@ -25,8 +25,9 @@ class Settings(BaseSettings):
 
     # CORS
     CORS_ORIGINS: list[str] = [
-        "http://10.10.0.13:{{FRONTEND_PORT}}",
-        "https://{{PROJECT_NAME}}.oklabs.uk",
+        "http://10.10.0.13:{{FRONTEND_PORT_DEV}}",  # Development (IP)
+        "http://10.10.0.13:{{FRONTEND_PORT}}",      # Deployed (IP fallback)
+        "https://{{PROJECT_NAME}}.oklabs.uk",       # Deployed (domain)
     ]
 
     # Google OAuth

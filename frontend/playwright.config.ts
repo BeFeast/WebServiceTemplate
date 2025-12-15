@@ -8,7 +8,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: "html",
   use: {
-    baseURL: "http://10.10.0.13:{{FRONTEND_PORT}}",
+    baseURL: "http://10.10.0.13:{{FRONTEND_PORT_DEV}}",
     trace: "on-first-retry",
   },
   projects: [
@@ -19,7 +19,7 @@ export default defineConfig({
   ],
   webServer: {
     command: "bun run dev",
-    url: "http://10.10.0.13:{{FRONTEND_PORT}}",
+    url: "http://10.10.0.13:{{FRONTEND_PORT_DEV}}",
     reuseExistingServer: !process.env.CI,
   },
 });

@@ -11,8 +11,8 @@ export default function Home() {
     
     if (isIP) {
       setUrls({
-        apiUrl: `http://${host}:{{BACKEND_PORT}}`,
-        frontendUrl: `http://${host}:{{FRONTEND_PORT}}`,
+        apiUrl: `http://${host}:{{BACKEND_PORT_DEV}}`,
+        frontendUrl: `http://${host}:{{FRONTEND_PORT_DEV}}`,
       });
     } else {
       const apiHost = host.replace(/^([^.]+)\./, "$1-api.");
