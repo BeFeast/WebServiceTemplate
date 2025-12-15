@@ -110,3 +110,11 @@ rg -n "Depends\(" app/
 ```bash
 cd backend && uv run ruff check . && uv run ruff format --check . && uv run pytest -v
 ```
+
+## Bug Fix Protocol (MANDATORY)
+1. **Reproduce**: Run failing test first
+2. **Fix**: Implement solution
+3. **Verify**: Run `uv run pytest -v` and **paste output**
+4. **Report**: Show test results proving fix works
+
+**NEVER say "it should work" - PROVE it with test output**

@@ -99,10 +99,45 @@ rg -n "process\.env\." frontend/src/
 ./scripts/deploy-to-devbox.sh  # Deploy via Portainer
 ```
 
+## Mandatory Rules
+
+### Bug Fix Verification (CRITICAL)
+- **NEVER** claim a fix works without running tests
+- **NEVER** say "try it" - test it yourself first
+- **ALWAYS** show test output proving the fix works
+- Run `make test` and paste results before claiming success
+
+### Long Running Commands
+Implement timeouts for commands > 30 seconds:
+- Package install: 5 min timeout
+- Docker build: 10 min timeout
+- Tests: 15 min timeout
+- Deploy: 20 min timeout
+
+### Context Preservation
+- Reference previous decisions when making new ones
+- Connect new work to existing patterns
+- If context lost, acknowledge and review previous work
+
+### Documentation
+- `.md` files go in `docs/` folder
+- Exceptions: `README.md`, `AGENTS.md` (root level OK)
+
 ## Definition of Done
 Before PR:
 ```bash
 make lint          # Ruff + ESLint pass
-make test          # pytest + Playwright pass
+make test          # pytest + Playwright pass - MUST SHOW OUTPUT
 make build         # Docker images build successfully
+```
+
+**Report format:**
+```
+## Changes Applied: [description]
+
+## Test Results:
+[paste actual test output]
+
+✅ All tests passing
+✅ No regressions detected
 ```

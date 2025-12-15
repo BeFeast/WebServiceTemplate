@@ -131,3 +131,11 @@ bun run test:ui
 ```bash
 cd frontend && bun run lint && bun run typecheck && bun run build
 ```
+
+## Bug Fix Protocol (MANDATORY)
+1. **Reproduce**: Run failing test first
+2. **Fix**: Implement solution  
+3. **Verify**: Run `bun run test` (Playwright) and **paste output**
+4. **Report**: Show test results proving fix works
+
+**NEVER say "it should work" - PROVE it with test output**
