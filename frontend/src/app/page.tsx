@@ -1,8 +1,29 @@
 "use client";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://10.10.0.13:{{BACKEND_PORT}}";
+import { useMemo } from "react";
 
 export default function Home() {
+  const { apiUrl, frontendUrl } = useMemo(() => {
+    if (typeof window === "undefined") {
+      return { apiUrl: "", frontendUrl: "" };
+    }
+    const host = window.location.hostname;
+    const isIP = /^\d+\.\d+\.\d+\.\d+$/.test(host);
+    
+    if (isIP) {
+      return {
+        apiUrl: `http://${host}:{{BACKEND_PORT}}`,
+        frontendUrl: `http://${host}:{{FRONTEND_PORT}}`,
+      };
+    } else {
+      const apiHost = host.replace(/^([^.]+)\./, "$1-api.");
+      return {
+        apiUrl: `${window.location.protocol}//${apiHost}`,
+        frontendUrl: window.location.origin,
+      };
+    }
+  }, []);
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24">
       <div className="text-center">
@@ -13,7 +34,7 @@ export default function Home() {
         
         <div className="flex gap-4 justify-center mb-8">
           <a
-            href={`${API_URL}/health`}
+            href={`${apiUrl}/health`}
             target="_blank"
             rel="noopener noreferrer"
             className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:opacity-90"
@@ -21,24 +42,18 @@ export default function Home() {
             API Health
           </a>
           <a
-            href={`${API_URL}/docs`}
+            href={`${apiUrl}/docs`}
             target="_blank"
             rel="noopener noreferrer"
             className="px-4 py-2 bg-secondary text-secondary-foreground rounded-md hover:opacity-90"
           >
             API Docs
           </a>
-          <a
-            href="/login"
-            className="px-4 py-2 bg-secondary text-secondary-foreground rounded-md hover:opacity-90"
-          >
-            Login
-          </a>
         </div>
 
         <div className="text-sm text-muted-foreground space-y-1">
-          <p>Frontend: <code className="bg-muted px-1 rounded">http://10.10.0.13:{{FRONTEND_PORT}}</code></p>
-          <p>Backend API: <code className="bg-muted px-1 rounded">{API_URL}</code></p>
+          <p>Frontend: <code className="bg-muted px-1 rounded">{frontendUrl}</code></p>
+          <p>Backend: <code className="bg-muted px-1 rounded">{apiUrl}</code></p>
         </div>
       </div>
     </main>
