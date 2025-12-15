@@ -1,28 +1,30 @@
 "use client";
 
-import { useMemo } from "react";
+import { useState, useEffect } from "react";
 
 export default function Home() {
-  const { apiUrl, frontendUrl } = useMemo(() => {
-    if (typeof window === "undefined") {
-      return { apiUrl: "", frontendUrl: "" };
-    }
+  const [urls, setUrls] = useState<{ apiUrl: string; frontendUrl: string } | null>(null);
+
+  useEffect(() => {
     const host = window.location.hostname;
     const isIP = /^\d+\.\d+\.\d+\.\d+$/.test(host);
     
     if (isIP) {
-      return {
+      setUrls({
         apiUrl: `http://${host}:{{BACKEND_PORT}}`,
         frontendUrl: `http://${host}:{{FRONTEND_PORT}}`,
-      };
+      });
     } else {
       const apiHost = host.replace(/^([^.]+)\./, "$1-api.");
-      return {
+      setUrls({
         apiUrl: `${window.location.protocol}//${apiHost}`,
         frontendUrl: window.location.origin,
-      };
+      });
     }
   }, []);
+
+  const apiUrl = urls?.apiUrl ?? "";
+  const frontendUrl = urls?.frontendUrl ?? "";
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24">
