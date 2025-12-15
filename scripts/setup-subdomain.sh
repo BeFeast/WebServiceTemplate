@@ -2,7 +2,7 @@
 set -e
 
 # Sets up subdomain in NPM and Cloudflare tunnel
-# Requires: add-subdomain.sh script in DevBox or access to NPM/CF APIs
+# This script runs locally on DevBox (10.10.0.13)
 
 SUBDOMAIN="${1:?Subdomain required}"
 TARGET_PORT="${2:-3000}"
@@ -10,10 +10,10 @@ TARGET_IP="10.10.0.13"  # Docker LXC 111
 
 echo "Setting up subdomain: ${SUBDOMAIN}.oklabs.uk -> ${TARGET_IP}:${TARGET_PORT}"
 
-# Check if add-subdomain.sh exists on DevBox
-if ssh god@10.10.0.13 "test -f /opt/scripts/add-subdomain.sh"; then
-    echo "Using DevBox add-subdomain.sh script..."
-    ssh god@10.10.0.13 "/opt/scripts/add-subdomain.sh $SUBDOMAIN $TARGET_IP $TARGET_PORT http"
+# Check if add-subdomain.sh exists locally
+if [[ -f /opt/scripts/add-subdomain.sh ]]; then
+    echo "Using local add-subdomain.sh script..."
+    /opt/scripts/add-subdomain.sh "$SUBDOMAIN" "$TARGET_IP" "$TARGET_PORT" http
 else
     echo "Manual setup required:"
     echo ""

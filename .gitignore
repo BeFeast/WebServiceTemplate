@@ -43,3 +43,5 @@ logs/
 *.pem
 *.key
 secrets/
+access-guide.md
+PRD.md
