@@ -18,7 +18,7 @@ services:
     ports:
       - "${BACKEND_PORT:-8000}:8000"
     networks:
-      - ok-shared-infra_default
+      - ok-shared-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
@@ -40,8 +40,8 @@ services:
       backend:
         condition: service_healthy
     networks:
-      - ok-shared-infra_default
+      - ok-shared-network
 
 networks:
-  ok-shared-infra_default:
+  ok-shared-network:
     external: true

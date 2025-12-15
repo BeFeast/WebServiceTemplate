@@ -16,7 +16,7 @@ services:
     ports:
       - "${BACKEND_PORT:-8000}:8000"
     networks:
-      - ok-shared-infra_default
+      - ok-shared-network
     command: uv run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
   frontend:
@@ -33,9 +33,9 @@ services:
     ports:
       - "${FRONTEND_PORT:-3000}:3000"
     networks:
-      - ok-shared-infra_default
+      - ok-shared-network
     command: bun run dev
 
 networks:
-  ok-shared-infra_default:
+  ok-shared-network:
     external: true
