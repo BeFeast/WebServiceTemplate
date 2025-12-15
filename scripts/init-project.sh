@@ -51,8 +51,10 @@ fi
 echo ""
 echo -e "${GREEN}Replacing placeholders...${NC}"
 
-# Find and replace all placeholders in files
-find . -type f \( -name "*.py" -o -name "*.ts" -o -name "*.tsx" -o -name "*.json" -o -name "*.yml" -o -name "*.yaml" -o -name "*.toml" -o -name "*.md" -o -name "*.sh" -o -name "*.env*" -o -name "Dockerfile*" -o -name "Makefile" \) -exec sed -i '' \
+# Find and replace all placeholders in files (Linux sed)
+find . -type f \( -name "*.py" -o -name "*.ts" -o -name "*.tsx" -o -name "*.json" -o -name "*.yml" -o -name "*.yaml" -o -name "*.toml" -o -name "*.md" -o -name "*.sh" -o -name "*.env*" -o -name "Dockerfile*" -o -name "Makefile" \) \
+    -not -path "./.git/*" \
+    -exec sed -i \
     -e "s/{{PROJECT_NAME}}/$PROJECT_NAME/g" \
     -e "s/{{PROJECT_SUBDOMAIN}}/$PROJECT_SUBDOMAIN/g" \
     -e "s/{{BACKEND_PORT}}/$BACKEND_PORT/g" \
@@ -60,20 +62,7 @@ find . -type f \( -name "*.py" -o -name "*.ts" -o -name "*.tsx" -o -name "*.json
     -e "s/{{REDIS_DB_NUM}}/$REDIS_DB_NUM/g" \
     -e "s/{{SECRET_KEY}}/$SECRET_KEY/g" \
     -e "s/{{DB_PASS}}/$DB_PASS/g" \
-    {} \; 2>/dev/null || true
-
-# Also handle Linux sed (without -i '')
-if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-    find . -type f \( -name "*.py" -o -name "*.ts" -o -name "*.tsx" -o -name "*.json" -o -name "*.yml" -o -name "*.yaml" -o -name "*.toml" -o -name "*.md" -o -name "*.sh" -o -name "*.env*" -o -name "Dockerfile*" -o -name "Makefile" \) -exec sed -i \
-        -e "s/{{PROJECT_NAME}}/$PROJECT_NAME/g" \
-        -e "s/{{PROJECT_SUBDOMAIN}}/$PROJECT_SUBDOMAIN/g" \
-        -e "s/{{BACKEND_PORT}}/$BACKEND_PORT/g" \
-        -e "s/{{FRONTEND_PORT}}/$FRONTEND_PORT/g" \
-        -e "s/{{REDIS_DB_NUM}}/$REDIS_DB_NUM/g" \
-        -e "s/{{SECRET_KEY}}/$SECRET_KEY/g" \
-        -e "s/{{DB_PASS}}/$DB_PASS/g" \
-        {} \;
-fi
+    {} \;
 
 # Create .env file from example
 cp docker/.env.example .env
